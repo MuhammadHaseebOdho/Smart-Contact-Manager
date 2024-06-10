@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="user/base::layout(~{::section})">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Document</title>
+</head>
+<body>
+<section>
+    <div class="card ml-3 mr-3">
+        <div class="card-body ">
+            <h1 class="text-center">
+                Your Contacts
+            </h1>
+            <div class="search-container my-3">
+                <input onkeyup="search()" id="search-input" type="text" class="form-control" placeholder="Search any contact"/>
+                <div id="search-result" class="search-result">
+
+                </div>
+            </div>
+            <div th:if="${session.message}" th:classappend="${session.message.type}" class="text-center alert" role="alert">
+                <p th:text="${session.message.content}"></p>
+                <th:block th:text="${@sessionHelper.removeMessage()}"></th:block>
+            </div>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th scope="col">#ID</th>
+                    <th scope="col">NAME</th>
+                    <th scope="col">EMAIL</th>
+                    <th scope="col">PHONE NUMBER</th>
+                    <th scope="col">ACTION</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="contact: ${contacts}">
+                    <th scope="row" th:text="${contact.getContactId()}"></th>
+                    <td th:text="${contact.getName()}"></td>
+                    <td ><a th:href="@{'/user/viewcontact/'+${contact.getContactId()}}" th:text="${contact.getEmail()}"></a></td>
+                    <td th:text="${contact.getPhoneNumber()}"></td>
+                    <td>
+                        <form METHOD="post" th:action="@{'/user/updatecontactform/'+${contact.getContactId()}}">
+                            <button class="bg-primary" type="submit"><i class="fa-solid fa-pen"></i></button></form>
+
+                        <a th:href="@{'/user/deletecontact/'+${contact.getContactId()}}"><i class="fa-solid fa-trash"></i></a>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item" th:if="${currentPage != 0}"><a class="page-link" th:href="@{'/user/viewcontacts/'+${currentPage -1} }">Previous</a></li>
+                    <li class="page-item" th:each="i:${#numbers.sequence(1,totalPages)}"><a class="page-link" th:href="@{'/user/viewcontacts/'+${i -1} }" th:text="${i}"></a></li>
+                    <li class="page-item" th:if="${currentPage != totalPages}"><a class="page-link"th:href="@{'/user/viewcontacts/'+${currentPage +1} }">Next</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</section>
+</body>
+</html>
